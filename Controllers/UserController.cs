@@ -37,6 +37,17 @@ namespace Jiran.Controllers
             else return BadRequest("No user Found");
         }
 
+        [HttpGet]
+        [Route("GetTitle")]
+        public async Task<IActionResult> GetTitle()
+        {
+
+            List<MasterTitle> titleList = await _dbContext.MasterTitles.ToListAsync();
+
+            if (titleList != null && titleList.Count > 0) return Ok(titleList);
+            else return BadRequest("No Title Found");
+        }
+
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register(string providedUserLogin, string providedPassword, string providedName, int providedTitle, string providedNric,
