@@ -188,6 +188,7 @@ public partial class JiranAppContext : DbContext
             entity.ToTable("Master_Feedback");
 
             entity.Property(e => e.FeedbackId).HasColumnName("Feedback_ID");
+            entity.Property(e => e.ComplaintId).HasColumnName("Complaint_ID");
             entity.Property(e => e.CreatedById).HasColumnName("Created_By_ID");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
@@ -313,6 +314,7 @@ public partial class JiranAppContext : DbContext
 
             entity.Property(e => e.UserId).HasColumnName("User_ID");
             entity.Property(e => e.CreatedById).HasColumnName("Created_By_ID");
+            entity.Property(e => e.TitleId).HasColumnName("Title_ID");
             entity.Property(e => e.CreatedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("Created_Date");
@@ -323,6 +325,7 @@ public partial class JiranAppContext : DbContext
                 .HasMaxLength(15)
                 .HasColumnName("Mobile_No");
             entity.Property(e => e.Name).HasMaxLength(100);
+            entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.Nric).HasColumnName("NRIC");
             entity.Property(e => e.Password).HasMaxLength(50);
             entity.Property(e => e.RoleId).HasColumnName("Role_ID");

@@ -18,4 +18,7 @@ public partial class MasterUnit
     public int? CreatedById { get; set; }
 
     public DateTime? CreatedDate { get; set; }
+    public MasterBlock? Block { get; set; }
+    public MasterFloor? Floor { get; set; }
+
 }

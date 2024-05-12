@@ -15,4 +15,5 @@ public partial class MasterBlock
 
     public int? SystemId { get; set; }
     public MasterSystem? System { get; set; }
+    //public MasterFloor? Floor { get; set; }
 }

@@ -15,5 +15,5 @@ public partial class MasterFloor
 
     public DateTime? CreatedDate { get; set; }
 
-    public MasterBlock? MasterBlock { get; set; }
+    public MasterBlock? Block { get; set; }
 }

@@ -20,7 +20,11 @@ namespace Jiran.Controllers
         public async Task<IActionResult> login(string username, string password)
         {
 
-            List<MasterUser> userList = await _dbContext.MasterUsers.Include(u => u.Role).Where(u => u.UserLogin == username && u.Password == password && u.Status == "A").ToListAsync();
+            List<MasterUser> userList = await _dbContext.MasterUsers.Include(u => u.Role).Include(u => u.System).Include(u => u.Title)
+            .Include(u => u.UnitNumber)
+               .ThenInclude(u => u.Floor)
+               .ThenInclude(u => u.Block)
+            .Where(u => u.UserLogin == username && u.Password == password && u.Status == "A").ToListAsync();
 
             if (userList != null && userList.Count > 0) return Ok(userList);
             else return BadRequest("No user Found");
@@ -31,7 +35,11 @@ namespace Jiran.Controllers
         public async Task<IActionResult> GetAllUser(int systemID)
         {
 
-            List<MasterUser> userList = await _dbContext.MasterUsers.Include(u => u.Role).Include(u => u.System).Where(u => u.SystemId == systemID ).ToListAsync();
+            List<MasterUser> userList = await _dbContext.MasterUsers.Include(u => u.Role).Include(u => u.System).Include(u => u.Title)
+            .Include(u => u.UnitNumber)
+               .ThenInclude(u => u.Floor)
+               .ThenInclude(u => u.Block)
+            .Where(u => u.SystemId == systemID ).ToListAsync();
 
             if (userList != null && userList.Count > 0) return Ok(userList);
             else return BadRequest("No user Found");
@@ -63,7 +71,7 @@ namespace Jiran.Controllers
                     UserLogin = providedUserLogin,
                     Password = providedPassword,
                     Name = providedName,
-                    Title = providedTitle,
+                    TitleId = providedTitle,
                     Nric = providedNric,
                     UnitNumberId = providedUnitNumberId,
                     MobileNo = providedMobileNo,
@@ -113,7 +121,7 @@ namespace Jiran.Controllers
             if (userToUpdate != null)
             {
                 userToUpdate.Name = providedName == null ? userToUpdate.Name: providedName;
-                userToUpdate.Title = providedTitle == 0 ? userToUpdate.Title: providedTitle;
+                userToUpdate.TitleId = providedTitle == 0 ? userToUpdate.TitleId: providedTitle;
                 userToUpdate.Nric = providedNric == null ? userToUpdate.Nric: providedNric;
                 //userToUpdate.UnitNumberId = providedUnitNumberId;
                 userToUpdate.MobileNo = providedMobileNo == null ? userToUpdate.MobileNo: providedMobileNo;
