@@ -32,4 +32,7 @@ public partial class MasterVisitor
     public string? QrFileName { get; set; }
 
     public DateTime? QrExpiryDate { get; set; }
+
+    public MasterUnit Unit { get; set; }   
+    
 }

@@ -63,6 +63,9 @@ namespace Jiran.Controllers
         {
             DateTime providedCreatedDate = DateTime.Now;
 
+            var userToUpdate = _dbContext.MasterUsers.FirstOrDefault(u => u.UserLogin == providedUserLogin );
+
+            if (userToUpdate != null) { return BadRequest("There has already exist user with the same login!");  }
 
             using (var dbContext = new JiranAppContext())
             {
@@ -111,12 +114,11 @@ namespace Jiran.Controllers
 
         [HttpPost]
         [Route("Update")]
-        public async Task<IActionResult> Update(string providedUserLogin, string providedPassword, string providedName, int providedTitle, string providedNric,
+        public async Task<IActionResult> Update(int providedUserID, string providedUserLogin, string providedPassword, string providedName, int providedTitle, string providedNric,
             int providedUnitNumberId, string providedMobileNo, string providedHomeNo, string providedStatus)
         {
-            var userToUpdate = _dbContext.MasterUsers.FirstOrDefault(u => u.UserLogin == providedUserLogin && u.Password == providedPassword);
+            var userToUpdate = _dbContext.MasterUsers.FirstOrDefault(u => u.UserId == providedUserID );
 
-            int userID = userToUpdate.UserId;
             // If the user is found, update its properties
             if (userToUpdate != null)
             {
@@ -126,8 +128,6 @@ namespace Jiran.Controllers
                 //userToUpdate.UnitNumberId = providedUnitNumberId;
                 userToUpdate.MobileNo = providedMobileNo == null ? userToUpdate.MobileNo: providedMobileNo;
                 userToUpdate.HomeNo = providedHomeNo == null ? userToUpdate.HomeNo: providedHomeNo;
-                userToUpdate.CreatedById = userID;
-                userToUpdate.CreatedDate = DateTime.Now;
                 userToUpdate.Status = providedStatus;
 
                 // Save changes to persist the updates
@@ -221,7 +221,7 @@ namespace Jiran.Controllers
         public async Task<IActionResult> GetVisitor()
         {
 
-            List<MasterVisitor> visitorList = await _dbContext.MasterVisitors.ToListAsync();
+            List<MasterVisitor> visitorList = await _dbContext.MasterVisitors.Include(u => u.Unit).ToListAsync();
 
             if (visitorList != null && visitorList.Count > 0) return Ok(visitorList);
             else return BadRequest("No user Found");

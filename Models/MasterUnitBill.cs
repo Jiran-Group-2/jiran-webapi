@@ -25,4 +25,8 @@ public partial class MasterUnitBill
 
     public int? SystemId { get; set; }
     public MasterSystem? System { get; set; }
+
+    public MasterUnit? UnitNumber { get; set; }
+
+    public MasterBill? Bill { get; set; }
 }
