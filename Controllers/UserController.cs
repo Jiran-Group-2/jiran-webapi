@@ -158,7 +158,7 @@ namespace Jiran.Controllers
                     VisitorVehicleType = providedVehicleType,
                     VisitorVehiclePlate = providedPlateNo,
                     ApprovalStatus = "P",
-                    UnitNumberId = providedUnitNumberID,
+                    UnitNumberId = 1,
                     CreatedById = providedCreatedByID,
                     CreatedDate = providedCreatedDate,
 
@@ -221,7 +221,7 @@ namespace Jiran.Controllers
         public async Task<IActionResult> GetVisitor()
         {
 
-            List<MasterVisitor> visitorList = await _dbContext.MasterVisitors.Include(u => u.Unit).ToListAsync();
+            List<MasterVisitor> visitorList = await _dbContext.MasterVisitors.Include(u => u.UnitNumber).ToListAsync();
 
             if (visitorList != null && visitorList.Count > 0) return Ok(visitorList);
             else return BadRequest("No user Found");

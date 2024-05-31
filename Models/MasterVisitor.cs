@@ -33,6 +33,6 @@ public partial class MasterVisitor
 
     public DateTime? QrExpiryDate { get; set; }
 
-    public MasterUnit Unit { get; set; }   
+    public MasterUnit? UnitNumber { get; set; }   
     
 }
