@@ -27,4 +27,6 @@ public partial class MasterComplaint
 
     public int? SystemId { get; set; }
     public MasterSystem? System { get; set; }
+
+    public MasterComplaintCategory complaintCategory { get; set; }
 }

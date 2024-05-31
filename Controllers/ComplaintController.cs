@@ -33,11 +33,11 @@ namespace Jiran.Controllers
         {
             List<MasterComplaint> complaintCategoryList = null;
             if(systemID > 0 && userID == 0) 
-                {complaintCategoryList = await _dbContext.MasterComplaints.Include(u => u.ComplaintId).Where(u => u.SystemId == systemID).ToListAsync();}
+                {complaintCategoryList = await _dbContext.MasterComplaints.Include(u => u.complaintCategory).Where(u => u.SystemId == systemID).ToListAsync();}
             else if (userID > 0 && systemID == 0)
-                {complaintCategoryList = await _dbContext.MasterComplaints.Include(u => u.ComplaintId).Where(u => u.UserId == userID).ToListAsync();}
+                {complaintCategoryList = await _dbContext.MasterComplaints.Include(u => u.complaintCategory).Where(u => u.UserId == userID).ToListAsync();}
             else
-                { complaintCategoryList = await _dbContext.MasterComplaints.Include(u => u.ComplaintId).Where(u => u.UserId == userID).ToListAsync();}
+                { complaintCategoryList = await _dbContext.MasterComplaints.Include(u => u.complaintCategory).Where(u => u.UserId == userID).ToListAsync();}
 
             if (complaintCategoryList != null && complaintCategoryList.Count > 0) return Ok(complaintCategoryList);
             else return BadRequest("No complaint Found");

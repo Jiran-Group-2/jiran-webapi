@@ -105,14 +105,27 @@ namespace Jiran.Controllers
 
         [HttpGet]
         [Route("GetUnitBill")]
-        public async Task<IActionResult> GetUnitBill()
+        public async Task<IActionResult> GetUnitBill(int? UnitNumberID)
         {
-            List<MasterUnitBill> UnitBillList = await _dbContext.MasterUnitBills
-            .Include(u => u.UnitNumber)
+            List<MasterUnitBill> UnitBillList = new List<MasterUnitBill>();
+            if(UnitNumberID == null)
+            {
+                UnitBillList = await _dbContext.MasterUnitBills
+                .Include(u => u.UnitNumber)
                 .ThenInclude(u => u.Floor)
                 .ThenInclude(u => u.Block)
-            .Include(u => u.Bill)
-            .ToListAsync();
+                .Include(u => u.Bill)
+                .ToListAsync();
+            }
+            else{
+                UnitBillList = await _dbContext.MasterUnitBills
+                .Include(u => u.UnitNumber)
+                .ThenInclude(u => u.Floor)
+                .ThenInclude(u => u.Block)
+                .Include(u => u.Bill).Where(u => u.UnitNumberId == UnitNumberID)
+                .ToListAsync();
+            }
+            
 
 
             return Ok(UnitBillList);
