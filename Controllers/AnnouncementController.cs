@@ -31,7 +31,15 @@ namespace Jiran.Controllers
         [Route("Add")]
         public async Task<IActionResult> Add(string providedAnnouncementSubject, string providedAnnouncementDescription, int providedCreatedById, int providedSystemID)
         {
-            DateTime providedCreatedDate = DateTime.Now;
+            //DateTime providedCreatedDate = DateTime.Now;
+            // Get the Singapore Standard Time zone (used by Malaysia)
+            TimeZoneInfo malaysiaZone = TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time");
+
+            // Get the current time in UTC
+            DateTime utcTime = DateTime.UtcNow;
+
+            // Convert the current UTC time to Malaysia Time
+            DateTime providedCreatedDate = TimeZoneInfo.ConvertTimeFromUtc(utcTime, malaysiaZone);
 
             var annoToUpdate = _dbContext.MasterAnnouncements.FirstOrDefault(u => u.AnnouncementSubject == providedAnnouncementSubject);
 

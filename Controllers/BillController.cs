@@ -28,7 +28,15 @@ namespace Jiran.Controllers
         [Route("Add")]
         public async Task<IActionResult> Add(string providedBillSubject, string providedBillDescription, decimal providedBillRate, int providedCreatedById)
         {
-            DateTime providedCreatedDate = DateTime.Now;
+            //DateTime providedCreatedDate = DateTime.Now;
+            // Get the Singapore Standard Time zone (used by Malaysia)
+            TimeZoneInfo malaysiaZone = TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time");
+
+            // Get the current time in UTC
+            DateTime utcTime = DateTime.UtcNow;
+
+            // Convert the current UTC time to Malaysia Time
+            DateTime providedCreatedDate = TimeZoneInfo.ConvertTimeFromUtc(utcTime, malaysiaZone);
 
             var billToUpdate = _dbContext.MasterBills.FirstOrDefault(u => u.BillSubject == providedBillSubject);
 
@@ -136,7 +144,16 @@ namespace Jiran.Controllers
         public async Task<IActionResult> AddUnitBill(int providedBillID, int providedUnitNumberID, int providedUserID, 
          decimal providedAmount, decimal providedPaid, decimal providedBalance, int providedCreatedById)
         {
-            DateTime providedCreatedDate = DateTime.Now;
+            //DateTime providedCreatedDate = DateTime.Now;
+            // Get the Singapore Standard Time zone (used by Malaysia)
+            TimeZoneInfo malaysiaZone = TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time");
+
+            // Get the current time in UTC
+            DateTime utcTime = DateTime.UtcNow;
+
+            // Convert the current UTC time to Malaysia Time
+            DateTime providedCreatedDate = TimeZoneInfo.ConvertTimeFromUtc(utcTime, malaysiaZone);
+            
             int systemID = 1;
 
             //var billToUpdate = _dbContext.MasterUnitBills.FirstOrDefault(u => u.BillSubject == providedBillSubject);

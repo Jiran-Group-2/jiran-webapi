@@ -61,7 +61,15 @@ namespace Jiran.Controllers
         public async Task<IActionResult> Register(string providedUserLogin, string providedPassword, string providedName, int providedTitle, string providedNric,
             int providedUnitNumberId, string providedMobileNo, string providedHomeNo, int providedRoleId, string providedUnitNo, int providedFloorID, int providedBlockID)
         {
-            DateTime providedCreatedDate = DateTime.Now;
+            //DateTime providedCreatedDate = DateTime.Now;
+            // Get the Singapore Standard Time zone (used by Malaysia)
+            TimeZoneInfo malaysiaZone = TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time");
+
+            // Get the current time in UTC
+            DateTime utcTime = DateTime.UtcNow;
+
+            // Convert the current UTC time to Malaysia Time
+            DateTime providedCreatedDate = TimeZoneInfo.ConvertTimeFromUtc(utcTime, malaysiaZone);
 
             var userToUpdate = _dbContext.MasterUsers.FirstOrDefault(u => u.UserLogin == providedUserLogin );
 
@@ -143,7 +151,15 @@ namespace Jiran.Controllers
         public async Task<IActionResult> RegisterVisitor(string providedVisitorName, string providedVisitorMobileNo, string providedVisitorNRIC ,int providedQuantity, string providedPurposeOfVisit, int providedVehicleType,
         string providedPlateNo,int providedUnitNumberID, int providedCreatedByID)
         {
-            DateTime providedCreatedDate = DateTime.Now;
+            //DateTime providedCreatedDate = DateTime.Now;
+            // Get the Singapore Standard Time zone (used by Malaysia)
+            TimeZoneInfo malaysiaZone = TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time");
+
+            // Get the current time in UTC
+            DateTime utcTime = DateTime.UtcNow;
+
+            // Convert the current UTC time to Malaysia Time
+            DateTime providedCreatedDate = TimeZoneInfo.ConvertTimeFromUtc(utcTime, malaysiaZone);
 
 
             using (var dbContext = new JiranAppContext())
