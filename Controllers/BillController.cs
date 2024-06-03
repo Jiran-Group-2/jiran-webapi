@@ -153,7 +153,7 @@ namespace Jiran.Controllers
 
             // Convert the current UTC time to Malaysia Time
             DateTime providedCreatedDate = TimeZoneInfo.ConvertTimeFromUtc(utcTime, malaysiaZone);
-            
+
             int systemID = 1;
 
             //var billToUpdate = _dbContext.MasterUnitBills.FirstOrDefault(u => u.BillSubject == providedBillSubject);
@@ -186,16 +186,22 @@ namespace Jiran.Controllers
         }
         [HttpPost]
         [Route("UpdateUnitBill")]
-        public async Task<IActionResult> UpdateUnitBill(int UnitBillID, decimal providedAmount, decimal providedPaid, decimal providedBalance)
+        public async Task<IActionResult> UpdateUnitBill(int UnitBillID, decimal providedPaid)
         {
             var unitBillToUpdate = _dbContext.MasterUnitBills.FirstOrDefault(u => u.UserBillId == UnitBillID);
+            decimal providedAmount = unitBillToUpdate?.Amount ?? 0;
+            decimal overPay = providedAmount - providedPaid;
+
+            if (overPay <= 0)
+            {return BadRequest("Over pay is not allowed");}
+
 
             // If the user is found, update its properties
             if (unitBillToUpdate != null)
             {
                 unitBillToUpdate.Amount = providedAmount;
                 unitBillToUpdate.Paid = providedPaid;
-                unitBillToUpdate.Balance = providedBalance;
+                unitBillToUpdate.Balance = overPay;
 
                 // Save changes to persist the updates
                 _dbContext.SaveChanges();
