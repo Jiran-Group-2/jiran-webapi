@@ -234,13 +234,23 @@ namespace Jiran.Controllers
 
         [HttpGet]
         [Route("GetVisitor")]
-        public async Task<IActionResult> GetVisitor()
+        public async Task<IActionResult> GetVisitor(int? unitUserID)
         {
-
-            List<MasterVisitor> visitorList = await _dbContext.MasterVisitors.Include(u => u.UnitNumber).ToListAsync();
+            List<MasterVisitor> visitorList  = new List<MasterVisitor>();
+            if(unitUserID == null)
+            {
+                visitorList = await _dbContext.MasterVisitors.Include(u => u.UnitNumber)
+                .ToListAsync();
+            }
+            else
+            {
+                visitorList = await _dbContext.MasterVisitors.Include(u => u.UnitNumber)
+                .Where(u => u.UnitNumberId == unitUserID)
+                .ToListAsync();
+            }
 
             if (visitorList != null && visitorList.Count > 0) return Ok(visitorList);
-            else return BadRequest("No user Found");
+            else return BadRequest("No visitor Found");
         }
     }
 }
