@@ -86,8 +86,8 @@ namespace Jiran.Controllers
 
         [HttpPost]
         [Route("UpdateComplaint")]
-        public async Task<IActionResult> UpdateComplaint(int providedComplaintID, int providedComplaintCategoryID, string providedComplaintLocation,
-        string providedComplaintSubject, string providedComplaintDescription, int providedAttachmentID, int providedFeedbackID, string providedStatus)
+        public async Task<IActionResult> UpdateComplaint(int? providedComplaintID, int? providedComplaintCategoryID, string? providedComplaintLocation,
+        string? providedComplaintSubject, string?providedComplaintDescription, int? providedAttachmentID, int? providedFeedbackID, string? providedStatus)
         {
             var complaintToUpdate = _dbContext.MasterComplaints.FirstOrDefault(u => u.ComplaintId == providedComplaintID);
 
