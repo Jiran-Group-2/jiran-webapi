@@ -201,7 +201,7 @@ namespace Jiran.Controllers
         [HttpPost]
         [Route("UpdateVisitor")]
         public async Task<IActionResult> UpdateVisitor(int providedVisitorID, string providedVisitorName, string providedVisitorMobileNo, string providedVisitorNRIC ,int providedQuantity, string providedPurposeOfVisit, int providedVehicleType,
-        string providedPlateNo,int providedUnitNumberID, int providedCreatedByID)
+        string providedPlateNo,int providedUnitNumberID, int providedCreatedByID, string providedStatus)
         {
             var visitorToUpdate = _dbContext.MasterVisitors.FirstOrDefault(u => u.VisitorId == providedVisitorID);
 
@@ -216,7 +216,7 @@ namespace Jiran.Controllers
                 visitorToUpdate.VisitorPurposeOfVisit = providedPurposeOfVisit == null ? visitorToUpdate.VisitorPurposeOfVisit: providedPurposeOfVisit;
                 visitorToUpdate.VisitorVehicleType = providedVehicleType == 0 ? visitorToUpdate.VisitorVehicleType: providedVehicleType;
                 visitorToUpdate.VisitorVehiclePlate = providedPlateNo == null ? visitorToUpdate.VisitorVehiclePlate: providedPlateNo;
-                visitorToUpdate.ApprovalStatus = "P" == null ? visitorToUpdate.ApprovalStatus: "P";
+                visitorToUpdate.ApprovalStatus = providedStatus;
                 visitorToUpdate.UnitNumberId = providedUnitNumberID == 0 ? visitorToUpdate.UnitNumberId: providedUnitNumberID;
                 //visitorToUpdate.CreatedById = providedCreatedByID == 0 ? visitorToUpdate.Name: providedName;
                 //visitorToUpdate.CreatedDate = providedCreatedDate == null ? visitorToUpdate.Name: providedName;
