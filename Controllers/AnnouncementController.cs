@@ -22,7 +22,6 @@ namespace Jiran.Controllers
         public async Task<IActionResult> Get(int systemID)
         {
             List<MasterAnnouncement> announcementList = await _dbContext.MasterAnnouncements.Include(u=> u.System).Where(u => u.SystemId == systemID).ToListAsync();
-            //test pushing
 
             return Ok(announcementList);
         }
@@ -49,7 +48,7 @@ namespace Jiran.Controllers
             {
                 var newAnnountment = new MasterAnnouncement
                 {
-                    AnnouncementSubject = providedAnnouncementSubject,
+                    AnnouncementSubject = providedAnnouncementSubject + ":test",
                     AnnouncementDescription = providedAnnouncementDescription,
                     CreatedById = providedCreatedById,
                     CreatedDate = providedCreatedDate,
