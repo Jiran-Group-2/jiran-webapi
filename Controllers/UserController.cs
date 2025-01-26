@@ -269,10 +269,9 @@ namespace Jiran.Controllers
 
         [HttpPost]
         [Route("RegisterVisitor")]
-        public async Task<IActionResult> RegisterVisitor(string providedVisitorName, string providedVisitorMobileNo, string providedVisitorNRIC ,int providedQuantity, string providedPurposeOfVisit, int providedVehicleType,
-        string providedPlateNo,int providedUnitNumberID, int providedCreatedByID)
+        public async Task<IActionResult> RegisterVisitor(string providedVisitorName, string providedVisitorMobileNo, string providedVisitorNRIC, int providedQuantity, string providedPurposeOfVisit, int providedVehicleType,
+        string providedPlateNo, int providedUnitNumberID, int providedCreatedByID)
         {
-            //DateTime providedCreatedDate = DateTime.Now;
             // Get the Singapore Standard Time zone (used by Malaysia)
             TimeZoneInfo malaysiaZone = TimeZoneInfo.FindSystemTimeZoneById("Singapore Standard Time");
 
@@ -282,96 +281,200 @@ namespace Jiran.Controllers
             // Convert the current UTC time to Malaysia Time
             DateTime providedCreatedDate = TimeZoneInfo.ConvertTimeFromUtc(utcTime, malaysiaZone);
 
+            string connectionString = "Host=dpg-cub3rrrqf0us73ccgbd0-a.singapore-postgres.render.com;Port=5432;Database=jiran;Username=jiran;Password=OIdjVxKzGqK58hPT8nUiXjQlS2i9UplX;SSL Mode=Require;Trust Server Certificate=true;";
 
-            using (var dbContext = new JiranAppContext())
+            using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
             {
-                var newVisitor = new MasterVisitor
+                await conn.OpenAsync(); // Open the connection asynchronously
+
+                // Insert visitor data
+                string insertQuery = @"INSERT INTO MasterVisitor (visitor_name, visitor_mobile_no, visitor_nric, visitor_quantity, visitor_purpose_of_visit, visitor_vehicle_plate, approval_status, unit_number_id, created_by_id, created_date)
+                               VALUES (@VisitorName, @VisitorMobileNo, @VisitorNRIC, @VisitorQuantity, @VisitorPurposeOfVisit, @VisitorVehiclePlate, 'P', @UnitNumberId, @CreatedById, @CreatedDate)";
+
+                using (NpgsqlCommand cmd = new NpgsqlCommand(insertQuery, conn))
                 {
-                    VisitorName = providedVisitorName,
-                    VisitorMobileNo = providedVisitorMobileNo,
-                    VisitorNRIC = providedVisitorNRIC,
-                    VisitorQuantity = providedQuantity,
-                    VisitorPurposeOfVisit = providedPurposeOfVisit,
-                    VisitorVehicleType = providedVehicleType,
-                    VisitorVehiclePlate = providedPlateNo,
-                    ApprovalStatus = "P",
-                    UnitNumberId = 1,
-                    CreatedById = providedCreatedByID,
-                    CreatedDate = providedCreatedDate,
+                    // Add parameters to prevent SQL injection
+                    cmd.Parameters.AddWithValue("VisitorName", providedVisitorName);
+                    cmd.Parameters.AddWithValue("VisitorMobileNo", providedVisitorMobileNo);
+                    cmd.Parameters.AddWithValue("VisitorNRIC", providedVisitorNRIC);
+                    cmd.Parameters.AddWithValue("VisitorQuantity", providedQuantity);
+                    cmd.Parameters.AddWithValue("VisitorPurposeOfVisit", providedPurposeOfVisit);
+                    cmd.Parameters.AddWithValue("VisitorVehiclePlate", providedPlateNo);
+                    cmd.Parameters.AddWithValue("UnitNumberId", 1);
+                    cmd.Parameters.AddWithValue("CreatedById", 1);
+                    cmd.Parameters.AddWithValue("CreatedDate", providedCreatedDate);
 
-                    
-                };
+                    // Execute the query to insert the data
+                    await cmd.ExecuteNonQueryAsync();
+                }
 
-                dbContext.MasterVisitors.Add(newVisitor);
-                dbContext.SaveChanges();
-            }
+                // After inserting, retrieve the inserted visitor data
+                string selectQuery = "SELECT * FROM MasterVisitor WHERE visitor_name = @VisitorName AND visitor_mobile_no = @VisitorMobileNo";
 
-            List<MasterVisitor> visitorList = await _dbContext.MasterVisitors.Where(u => u.VisitorName == providedVisitorName && u.VisitorMobileNo == providedVisitorMobileNo).ToListAsync();
+                List<MasterVisitor> visitorList = new List<MasterVisitor>();
+
+                using (NpgsqlCommand cmd = new NpgsqlCommand(selectQuery, conn))
+                {
+                    // Add parameters to prevent SQL injection
+                    cmd.Parameters.AddWithValue("VisitorName", providedVisitorName);
+                    cmd.Parameters.AddWithValue("VisitorMobileNo", providedVisitorMobileNo);
+
+                    using (NpgsqlDataReader dr = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await dr.ReadAsync())
+                        {
+                            MasterVisitor masterVisitor = new MasterVisitor
+                            {
+                                VisitorId = Convert.ToInt32(dr["visitor_id"]),
+                                VisitorName = dr["visitor_name"]?.ToString(),
+                                VisitorMobileNo = dr["visitor_mobile_no"]?.ToString(),
+                                VisitorNRIC = dr["visitor_nric"]?.ToString(),
+                                VisitorQuantity = Convert.ToInt32(dr["visitor_quantity"]),
+                                VisitorPurposeOfVisit = dr["visitor_purpose_of_visit"]?.ToString(),
+                                //VisitorVehicleType = Convert.ToInt32(dr["visitor_vehicle_type"]),
+                                VisitorVehiclePlate = dr["visitor_vehicle_plate"]?.ToString(),
+                                ApprovalStatus = dr["approval_status"]?.ToString(),
+                                UnitNumberId = Convert.ToInt32(dr["unit_number_id"])
+                            };
 
 
-            if(visitorList.Count > 0)
-            {
-                return Ok(visitorList);
-            }
-            else
-            {
-                return BadRequest("Failed to insert");
+                            visitorList.Add(masterVisitor);
+                        }
+                    }
+                }
+
+                if (visitorList.Count > 0)
+                {
+                    return Ok(visitorList); // Return the inserted visitor data
+                }
+                else
+                {
+                    return BadRequest("Failed to insert visitor"); // Return error if no visitor data is found
+                }
             }
         }
+
 
         [HttpPost]
         [Route("UpdateVisitor")]
-        public async Task<IActionResult> UpdateVisitor(int providedVisitorID, string providedVisitorName, string providedVisitorMobileNo, string providedVisitorNRIC ,int providedQuantity, string providedPurposeOfVisit, int providedVehicleType,
-        string providedPlateNo,int providedUnitNumberID, int providedCreatedByID, string providedStatus)
+        public async Task<IActionResult> UpdateVisitor(int providedVisitorID, string providedVisitorName, string providedVisitorMobileNo, string providedVisitorNRIC, int providedQuantity, string providedPurposeOfVisit, int providedVehicleType,
+string providedPlateNo, string providedStatus)
         {
-            var visitorToUpdate = _dbContext.MasterVisitors.FirstOrDefault(u => u.VisitorId == providedVisitorID);
+            string connectionString = "Host=dpg-cub3rrrqf0us73ccgbd0-a.singapore-postgres.render.com;Port=5432;Database=jiran;Username=jiran;Password=OIdjVxKzGqK58hPT8nUiXjQlS2i9UplX;SSL Mode=Require;Trust Server Certificate=true;";
 
-            int? userID = visitorToUpdate.CreatedById;
-            // If the user is found, update its properties
-            if (visitorToUpdate != null)
+            using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
             {
-                visitorToUpdate.VisitorName = providedVisitorName == null ? visitorToUpdate.VisitorName: providedVisitorName;
-                visitorToUpdate.VisitorMobileNo = providedVisitorMobileNo == null ? visitorToUpdate.VisitorMobileNo: providedVisitorMobileNo;
-                visitorToUpdate.VisitorNRIC = providedVisitorNRIC == null ? visitorToUpdate.VisitorNRIC: providedVisitorNRIC;
-                visitorToUpdate.VisitorQuantity = providedQuantity == 0 ? visitorToUpdate.VisitorQuantity: providedQuantity;
-                visitorToUpdate.VisitorPurposeOfVisit = providedPurposeOfVisit == null ? visitorToUpdate.VisitorPurposeOfVisit: providedPurposeOfVisit;
-                visitorToUpdate.VisitorVehicleType = providedVehicleType == 0 ? visitorToUpdate.VisitorVehicleType: providedVehicleType;
-                visitorToUpdate.VisitorVehiclePlate = providedPlateNo == null ? visitorToUpdate.VisitorVehiclePlate: providedPlateNo;
-                visitorToUpdate.ApprovalStatus = providedStatus;
-                visitorToUpdate.UnitNumberId = providedUnitNumberID == 0 ? visitorToUpdate.UnitNumberId: providedUnitNumberID;
-                //visitorToUpdate.CreatedById = providedCreatedByID == 0 ? visitorToUpdate.Name: providedName;
-                //visitorToUpdate.CreatedDate = providedCreatedDate == null ? visitorToUpdate.Name: providedName;
+                await conn.OpenAsync(); // Open the connection asynchronously
 
-                // Save changes to persist the updates
-                _dbContext.SaveChanges();
-            }
-            else{
-                return BadRequest("Failed to update visitor");
-            }
+                // Fetch the existing visitor to check if the provided ID exists
+                string selectQuery = "SELECT * FROM MasterVisitor WHERE visitor_id = @VisitorId";
 
+                using (NpgsqlCommand selectCmd = new NpgsqlCommand(selectQuery, conn))
+                {
+                    selectCmd.Parameters.AddWithValue("VisitorId", providedVisitorID);
+                    using (NpgsqlDataReader dr = await selectCmd.ExecuteReaderAsync())
+                    {
+                        if (!dr.Read())
+                        {
+                            return BadRequest("Visitor not found");
+                        }
+                    }
+                }
+
+                // Update visitor details
+                string updateQuery = @"
+                UPDATE MasterVisitor
+                SET
+                    visitor_name = COALESCE(@VisitorName, visitor_name),
+                    visitor_mobile_no = COALESCE(@VisitorMobileNo, visitor_mobile_no),
+                    visitor_nric = COALESCE(@VisitorNRIC, visitor_nric),
+                    visitor_quantity = COALESCE(@VisitorQuantity, visitor_quantity),
+                    visitor_purpose_of_visit = COALESCE(@VisitorPurposeOfVisit, visitor_purpose_of_visit),
+                    visitor_vehicle_plate = COALESCE(@VisitorVehiclePlate, visitor_vehicle_plate),
+                    approval_status = @ApprovalStatus
+                WHERE visitor_id = @VisitorId";
+
+                using (NpgsqlCommand updateCmd = new NpgsqlCommand(updateQuery, conn))
+                {
+                    updateCmd.Parameters.AddWithValue("VisitorId", providedVisitorID);
+                    updateCmd.Parameters.AddWithValue("VisitorName", providedVisitorName ?? (object)DBNull.Value);
+                    updateCmd.Parameters.AddWithValue("VisitorMobileNo", providedVisitorMobileNo ?? (object)DBNull.Value);
+                    updateCmd.Parameters.AddWithValue("VisitorNRIC", providedVisitorNRIC ?? (object)DBNull.Value);
+                    updateCmd.Parameters.AddWithValue("VisitorQuantity", providedQuantity != 0 ? providedQuantity : (object)DBNull.Value);
+                    updateCmd.Parameters.AddWithValue("VisitorPurposeOfVisit", providedPurposeOfVisit ?? (object)DBNull.Value);
+                    updateCmd.Parameters.AddWithValue("VisitorVehiclePlate", providedPlateNo ?? (object)DBNull.Value);
+                    updateCmd.Parameters.AddWithValue("ApprovalStatus", providedStatus ?? (object)DBNull.Value);
+
+                    int rowsAffected = await updateCmd.ExecuteNonQueryAsync();
+                    if (rowsAffected == 0)
+                    {
+                        return BadRequest("Failed to update visitor");
+                    }
+                }
+            }
 
             return Ok();
         }
+
 
         [HttpGet]
         [Route("GetVisitor")]
         public async Task<IActionResult> GetVisitor(int? unitUserID)
         {
-            List<MasterVisitor> visitorList  = new List<MasterVisitor>();
-            if(unitUserID == null)
+            string connectionString = "Host=dpg-cub3rrrqf0us73ccgbd0-a.singapore-postgres.render.com;Port=5432;Database=jiran;Username=jiran;Password=OIdjVxKzGqK58hPT8nUiXjQlS2i9UplX;SSL Mode=Require;Trust Server Certificate=true;";
+
+            List<MasterVisitor> visitorList = new List<MasterVisitor>();
+
+            using (NpgsqlConnection conn = new NpgsqlConnection(connectionString))
             {
-                visitorList = await _dbContext.MasterVisitors.Include(u => u.UnitNumber)
-                .ToListAsync();
+                await conn.OpenAsync(); // Open the connection asynchronously
+
+                string query = "SELECT * FROM MasterVisitor";
+
+                using (NpgsqlCommand cmd = new NpgsqlCommand(query, conn))
+                {
+                    if (unitUserID != null)
+                    {
+                        cmd.Parameters.AddWithValue("UnitUserID", unitUserID);
+                    }
+
+                    using (NpgsqlDataReader dr = await cmd.ExecuteReaderAsync())
+                    {
+                        var columnNames = Enumerable.Range(0, dr.FieldCount)
+                                            .Select(dr.GetName)
+                                            .ToList();
+
+                        while (await dr.ReadAsync())
+                        {
+                            MasterVisitor masterVisitor = new MasterVisitor
+                            {
+                                VisitorId = Convert.ToInt32(dr["visitor_id"]),
+                                VisitorName = dr["visitor_name"]?.ToString(),
+                                VisitorMobileNo = dr["visitor_mobile_no"]?.ToString(),
+                                VisitorNRIC = dr["visitor_nric"]?.ToString(),
+                                VisitorQuantity = Convert.ToInt32(dr["visitor_quantity"]),
+                                VisitorPurposeOfVisit = dr["visitor_purpose_of_visit"]?.ToString(),
+                                //VisitorVehicleType = Convert.ToInt32(dr["visitor_vehicle_type"]),
+                                VisitorVehiclePlate = dr["visitor_vehicle_plate"]?.ToString(),
+                                ApprovalStatus = dr["approval_status"]?.ToString(),
+                                UnitNumberId = Convert.ToInt32(dr["unit_number_id"])
+                            };
+
+                            visitorList.Add(masterVisitor); // Add each visitor to the list
+                        }
+                    }
+                }
+            }
+
+            if (visitorList.Count > 0)
+            {
+                return Ok(visitorList);
             }
             else
             {
-                visitorList = await _dbContext.MasterVisitors.Include(u => u.UnitNumber)
-                .Where(u => u.UnitNumberId == unitUserID)
-                .ToListAsync();
+                return BadRequest("No visitor Found");
             }
-
-            if (visitorList != null && visitorList.Count > 0) return Ok(visitorList);
-            else return BadRequest("No visitor Found");
         }
+
     }
 }
