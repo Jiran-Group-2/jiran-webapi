@@ -1,25 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "/Users/hadzim/Desktop/work/Jiran/Jiran/Jiran-Webapi/Jiran.csproj": {}
+    "C:\\StudyApp\\jiran-webapi\\jiran-webapi\\Jiran.csproj": {}
   },
   "projects": {
-    "/Users/hadzim/Desktop/work/Jiran/Jiran/Jiran-Webapi/Jiran.csproj": {
+    "C:\\StudyApp\\jiran-webapi\\jiran-webapi\\Jiran.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/hadzim/Desktop/work/Jiran/Jiran/Jiran-Webapi/Jiran.csproj",
+        "projectUniqueName": "C:\\StudyApp\\jiran-webapi\\jiran-webapi\\Jiran.csproj",
         "projectName": "Jiran",
-        "projectPath": "/Users/hadzim/Desktop/work/Jiran/Jiran/Jiran-Webapi/Jiran.csproj",
-        "packagesPath": "/Users/hadzim/.nuget/packages/",
-        "outputPath": "/Users/hadzim/Desktop/work/Jiran/Jiran/Jiran-Webapi/obj/",
+        "projectPath": "C:\\StudyApp\\jiran-webapi\\jiran-webapi\\Jiran.csproj",
+        "packagesPath": "C:\\Users\\hadzi\\.nuget\\packages\\",
+        "outputPath": "C:\\StudyApp\\jiran-webapi\\jiran-webapi\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\DevExpress 23.2\\Components\\Offline Packages"
+        ],
         "configFilePaths": [
-          "/Users/hadzim/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\hadzi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 23.2.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\DevExpress 23.2\\Components\\System\\Components\\Packages": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -32,6 +40,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -54,9 +67,17 @@
               "target": "Package",
               "version": "[7.0.16, )"
             },
+            "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+              "target": "Package",
+              "version": "[1.21.0, )"
+            },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[6.0.6, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[7.0.18, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -74,6 +95,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[6.0.33, 6.0.33]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[6.0.33, 6.0.33]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[6.0.33, 6.0.33]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[6.0.33, 6.0.33]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -82,7 +121,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.416/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }
