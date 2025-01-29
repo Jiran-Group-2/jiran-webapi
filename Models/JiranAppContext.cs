@@ -47,18 +47,18 @@ public partial class JiranAppContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-    if (!optionsBuilder.IsConfigured)
-    {
-        IConfigurationRoot configuration = new ConfigurationBuilder()
-            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-            .AddJsonFile("appsettings.json")
-            .Build();
+        if (!optionsBuilder.IsConfigured)
+        {
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json")
+                .Build();
 
-        string connectionString = configuration.GetConnectionString("DefaultConnection");
-        optionsBuilder.UseSqlServer(connectionString);
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
+            optionsBuilder.UseSqlServer(connectionString);
+        }
     }
-    }
-        //=> optionsBuilder.UseSqlServer("Server=Hadzims-MacBook-Pro.local,1433;Database=JiranApp;User=SA;Password=MuhammadHadzim1;TrustServerCertificate=true;");
+    //=> optionsBuilder.UseSqlServer("Server=Hadzims-MacBook-Pro.local,1433;Database=JiranApp;User=SA;Password=MuhammadHadzim1;TrustServerCertificate=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
