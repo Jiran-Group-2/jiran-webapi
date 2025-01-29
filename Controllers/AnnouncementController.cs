@@ -105,7 +105,7 @@ namespace Jiran.Controllers
                 _dbContext.SaveChanges();
             }
             else{
-                return BadRequest("Not exist");
+                return BadRequest("This does not exist in our system");
             }
 
 
