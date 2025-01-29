@@ -20,7 +20,7 @@ namespace Jiran.Controllers
         public async Task<IActionResult> login(string username, string password)
         {
 
-            List<MasterUser> userList = await _dbContext.MasterUsers.Include(u => u.Role).Include(u => u.System).Include(u => u.Title)
+            List<MasterUser> userList = await _dbContext.MasterUsers.Include(u => u.Role).Include(u => u.System)
             .Include(u => u.UnitNumber)
                .ThenInclude(u => u.Floor)
                .ThenInclude(u => u.Block)
@@ -246,7 +246,7 @@ namespace Jiran.Controllers
             else
             {
                 visitorList = await _dbContext.MasterVisitors.Include(u => u.UnitNumber)
-                .Where(u => u.UnitNumberId == unitUserID)
+                .Where(u => u.VisitorId == unitUserID)
                 .ToListAsync();
             }
 
